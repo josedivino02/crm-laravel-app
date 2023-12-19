@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# # Cores
-# NC='\033[0m'
-# BBlue='\033[1;34m'
-# BRed='\033[1;31m'
+# Cores
+NC='\033[0m'
+BBlue='\033[1;34m'
+BRed='\033[1;31m'
 
 # REGEX_ISSUE_ID="[a-zA-Z0-9,\.\_\-]+-[0-9]+"
 # BRANCH_NAME=$(git symbolic-ref --short HEAD)
@@ -16,9 +16,9 @@
 #     exit 1
 # fi
 
-# # i.g. CRM-1: CRM-1: my feature
-# if [[ $COMMIT_MESSAGE == $ISSUE_ID* ]]; then
-#     exit 0
-# fi
+# i.g. CRM-1: CRM-1: my feature
+if [[ $COMMIT_MESSAGE == $ISSUE_ID* ]]; then
+    exit 0
+fi
 
-# echo "$ISSUE_ID: $COMMIT_MESSAGE" >$1
+echo "$ISSUE_ID: $COMMIT_MESSAGE" >$1
