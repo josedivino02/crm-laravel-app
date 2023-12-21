@@ -9,18 +9,19 @@ use Livewire\Component;
 
 class Login extends Component
 {
-    public ?string $email;
+    public ?string $email = '';
 
-    public ?string $password;
+    public ?string $password = '';
 
     public function render(): View
     {
-        return view('livewire.auth.login');
+        return view('livewire.auth.login')
+            ->layout('components.layouts.guest');
     }
 
     public function tryToLogin(): void
     {
-        if ($this->ensureIsNoteRateLimiting()) {
+        if ($this->ensureIsNotRateLimiting()) {
             return;
         }
 
@@ -30,7 +31,7 @@ class Login extends Component
             $this->addError('invalidCredentials', trans('auth.failed'));
 
             return;
-        };
+        }
 
         $this->redirect(route('dashboard'));
     }
@@ -40,14 +41,16 @@ class Login extends Component
         return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
     }
 
-    private function ensureIsNoteRateLimiting()
+    private function ensureIsNotRateLimiting()
     {
         if (RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             $this->addError('rateLimiter', trans('auth.throttle', [
                 'seconds' => RateLimiter::availableIn($this->throttleKey()),
             ]));
 
-            return;
-        };
+            return true;
+        }
+
+        return false;
     }
 }
