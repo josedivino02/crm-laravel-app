@@ -1,3 +1,3 @@
 <div>
-    {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
+    <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" wire:click="logout" />
 </div>
