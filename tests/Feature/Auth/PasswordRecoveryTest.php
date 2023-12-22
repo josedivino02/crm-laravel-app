@@ -26,3 +26,14 @@ it("should be able to request for a password recovery sending notification to th
 
     Notification::assertSentTo($user, PasswordRecoveryNotification::class);
 });
+
+test("testing email property", function ($value, $rule) {
+    Livewire::test(Recovery::class)
+        ->assertDontSee('You will receive an email with the password recovery link.')
+        ->set('email', $value)
+        ->call('startPasswordRecovery')
+        ->assertHasErrors(['email' => $rule]);
+})->with([
+    'required' => ['value' => '', 'rule' => 'required'],
+    'email'    => ['value' => 'any email', 'rule' => 'email'],
+]);
