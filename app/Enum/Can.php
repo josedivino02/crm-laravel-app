@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Enum;
 
-enum Can: string
-{
+enum Can: string {
     case BE_AN_ADMIN = "be an admin";
 }

@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Traits\Models;
 
+use App\Enum\Can;
+use App\Models\Permission;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 
@@ -21,7 +23,7 @@ trait HasPermissions
         Cache::forget($this->getPermissionCacheKey());
         Cache::rememberForever(
             $this->getPermissionCacheKey(),
-            fn () => $this->permissions
+            fn() => $this->permissions
         );
     }
 
