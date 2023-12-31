@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Models\{Can, User};
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -43,10 +43,10 @@ class UserFactory extends Factory
         ]);
     }
 
-    public function withPermission(string $key): static
+    public function withPermission(Can | string $key): static
     {
         return $this->afterCreating(
-            fn (User $user) => $user->givePermissionTo('be an admin')
+            fn (User $user) => $user->givePermissionTo($key)
         );
     }
 }
