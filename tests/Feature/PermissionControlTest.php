@@ -1,6 +1,7 @@
 <?php
 
 use App\Enum\Can;
+
 use App\Models\{Permission, User};
 use Database\Seeders\{PermissionSeeder, UsersSeeder};
 use Illuminate\Support\Facades\{Cache, DB};
@@ -26,7 +27,7 @@ it('should be able to give an user a permission to do something', function () {
     ]);
 });
 
-test("permission has to have a seeder", function () {
+test("permission must have a seeder", function () {
     $this->seed(PermissionSeeder::class);
 
     assertDatabaseHas('permissions', [
