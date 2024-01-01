@@ -16,5 +16,7 @@ class UsersSeeder extends Seeder
                 'name'  => 'Divino',
                 'email' => 'jose@divino.com',
             ]);
+
+        User::factory()->count(50)->create();
     }
 }
