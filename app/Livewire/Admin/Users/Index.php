@@ -30,7 +30,7 @@ class Index extends Component
     #[Computed]
     public function users(): Collection
     {
-        $this->validate(['search_permissions' => 'exists:permission,id']);
+        $this->validate(['search_permissions' => 'exists:permissions,id']);
 
         return User::query()
             ->when(
