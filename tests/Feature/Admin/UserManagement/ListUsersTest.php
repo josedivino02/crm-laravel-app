@@ -2,6 +2,7 @@
 
 use App\Enum\Can;
 use App\Livewire\Admin;
+
 use App\Models\{Permission, User};
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Livewire;
@@ -98,6 +99,27 @@ it("should be able to filter by name and email", function () {
             return true;
         })
         ->set('search_permissions', [$permission->id, $permission2->id])
+        ->assertSet('users', function ($users) {
+            expect($users)
+                ->toHaveCount(2);
+
+            return true;
+        });
+});
+
+it("should be able to list deleted users", function () {
+    $admin        = User::factory()->admin()->create(['name' => 'Divino', "email" => 'admin@gmail.com']);
+    $deletedUsers = User::factory()->count(2)->create(['deleted_at' => now()]);
+
+    actingAs($admin);
+
+    Livewire::test(Admin\Users\Index::class)
+        ->assertSet('users', function ($users) {
+            expect($users)->toHaveCount(1);
+
+            return true;
+        })
+        ->set('search_trash', true)
         ->assertSet('users', function ($users) {
             expect($users)
                 ->toHaveCount(2);
