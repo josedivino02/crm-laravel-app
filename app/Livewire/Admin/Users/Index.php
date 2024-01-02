@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Users;
 use App\Enum\Can;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+
 use Illuminate\Database\Eloquent\{Builder, Collection};
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -48,12 +49,9 @@ class Index extends Component
             )
             ->when(
                 $this->search_permissions,
-                fn (Builder $q) => $q->whereRaw("
-                    (select count(*)
-                    from permission_user
-                    where permission_id in (?)
-                    and user_id = users.id) > 0
-                    ", $this->search_permissions)
+                fn (Builder $q) => $q->whereHas("permissions", function (Builder $query) {
+                    $query->whereIn("id", $this->search_permissions);
+                })
             )
             ->get();
     }
