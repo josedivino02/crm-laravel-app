@@ -1,14 +1,14 @@
 <div>
     <x-header title="Users" separator />
 
-    <div class="mb-4">
+    <div class="mb-4 flex space-x-4">
         <div class="w-1/3">
-            <x-input icon="o-magnifying-glass" class="input-sm" placeholder="Search by email and name"
+            <x-input icon="o-magnifying-glass" label="Search by email or name" placeholder="Search by email and name"
                 wire:model.live="search" />
         </div>
-        <x-select class="select-sm">
-            <option></option>
-        </x-select>
+        <x-choices label="Search by permissions" placeholder="Filter by Permissions" wire:model="search_permissions"
+            :options="$permissionsToSearch" option-label="key" search-function="filterPermissions" searchable
+            no-result-text="Nothing here" />
     </div>
 
     <x-table :headers="$this->headers" :rows="$this->users">
