@@ -2,7 +2,6 @@
 
 use App\Enum\Can;
 use App\Livewire\Admin;
-
 use App\Models\{Permission, User};
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Livewire;
@@ -126,4 +125,33 @@ it("should be able to list deleted users", function () {
 
             return true;
         });
+});
+
+it("should be able to sort by name", function () {
+    $admin    = User::factory()->admin()->create(['name' => 'Divino', "email" => 'admin@gmail.com']);
+    $nonAdmin = User::factory()->withPermission(Can::TESTING)->create(['name' => 'Mario', 'email' => "little_guy@gmail.com"]);
+
+    actingAs($admin);
+
+    Livewire::test(Admin\Users\Index::class)
+        ->set('sortDirection', 'asc')
+        ->set('sortColumnBy', 'name')
+        ->assertSet('users', function ($users) {
+            expect($users)
+                ->first()->name->toBe('Divino')
+                ->and($users)->last()->name->toBe('Mario');
+
+            return true;
+        })
+        ->set('sortDirection', 'desc')
+        ->set('sortColumnBy', 'name')
+        ->assertSet('users', function ($users) {
+            expect($users)
+                ->first()->name->toBe('Mario')
+                ->and($users)->last()->name->toBe('Divino');
+
+            return true;
+        });
+    ;
+
 });
