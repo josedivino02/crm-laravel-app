@@ -2,7 +2,6 @@
 
 use App\Enum\Can;
 use App\Livewire\Admin;
-
 use App\Models\{Permission, User};
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Livewire;
@@ -153,6 +152,20 @@ it("should be able to sort by name", function () {
 
             return true;
         });
-    ;
+});
 
+it("should be able to paginate the result", function () {
+    $admin    = User::factory()->admin()->create(['name' => 'Divino', "email" => 'admin@gmail.com']);
+    $nonAdmin = User::factory()->withPermission(Can::TESTING)->count(30)->create();
+
+    actingAs($admin);
+
+    Livewire::test(Admin\Users\Index::class)
+        ->set('perPage', 20)
+        ->assertSet('users', function (LengthAwarePaginator $users) {
+            expect($users)
+                ->toHaveCount(20);
+
+            return true;
+        });
 });
