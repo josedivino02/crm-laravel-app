@@ -23,7 +23,7 @@ trait HasPermissions
         Cache::forget($this->getPermissionCacheKey());
         Cache::rememberForever(
             $this->getPermissionCacheKey(),
-            fn() => $this->permissions
+            fn () => $this->permissions
         );
     }
 
@@ -31,7 +31,7 @@ trait HasPermissions
     {
         $pKey = $key instanceof Can ? $key->value : $key;
 
-        $permissions = Cache::get($this->getPermissionCacheKey(), $this->permissions);
+        $permissions = Cache::get($this->getPermissionCacheKey(), fn () => $this->permissions);
 
         return $permissions->where('key', '=', $pKey)->isNotEmpty();
     }
