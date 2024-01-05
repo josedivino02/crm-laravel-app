@@ -10,7 +10,8 @@
             :options="$permissionsToSearch" option-label="key" search-function="filterPermissions" searchable
             no-result-text="Nothing here" />
 
-        <x-checkbox label="Show Deleted Users" wire:model.live="search_trash" class="checkbox-primary" right tight />
+        <x-checkbox class="mb-4" label="Show Deleted Users" wire:model.live="search_trash" class="checkbox-primary"
+            right tight />
 
         <x-select wire:model.live="perPage" :options="[
             ['id' => 5, 'name' => 5],
