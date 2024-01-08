@@ -40,12 +40,14 @@
         @endscope
 
         @scope('actions', $user)
-            @unless ($user->trashed())
-                <x-button icon="o-trash" wire:click="delete({{ $user->id }})" spinner class="btn-sm" />
-            @else
-                <x-button icon="o-arrow-path-rounded-square" wire:click="delete({{ $user->id }})" spinner
-                    class="btn-sm btn-success btn-ghost" />
-            @endunless
+            @can(\App\Enum\Can::BE_AN_ADMIN->value)
+                @unless ($user->trashed())
+                    <livewire:admin.users.delete :$user wire:key="delete-btn-{{ $user->id }}" />
+                @else
+                    <x-button icon="o-arrow-path-rounded-square" wire:click="delete({{ $user->id }})" spinner
+                        class="btn-sm btn-success btn-ghost" />
+                @endunless
+            @endcan
         @endscope
     </x-table>
 
