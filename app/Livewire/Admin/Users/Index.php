@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\{Builder, Collection};
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Computed;
+use Livewire\Attributes\{Computed, On};
 use Livewire\{Component, WithPagination};
 
 class Index extends Component
@@ -35,6 +35,8 @@ class Index extends Component
         $this->filterPermissions();
     }
 
+    #[On('user::deleted')]
+    #[On('user::restored')]
     public function render(): View
     {
         return view("livewire.admin.users.index");
@@ -112,5 +114,10 @@ class Index extends Component
     public function destroy(int $id): void
     {
         $this->dispatch('user::deletion', userId: $id)->to('admin.users.delete');
+    }
+
+    public function restore(int $id): void
+    {
+        $this->dispatch('user::restoring', userId: $id)->to('admin.users.restore');
     }
 }

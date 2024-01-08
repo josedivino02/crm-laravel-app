@@ -47,7 +47,7 @@
                             wire:click="destroy('{{ $user->id }}')" spinner class="btn-sm" />
                     @endunless
                 @else
-                    <x-button icon="o-arrow-path-rounded-square" wire:click="delete({{ $user->id }})" spinner
+                    <x-button icon="o-arrow-path-rounded-square" wire:click="restore({{ $user->id }})" spinner
                         class="btn-sm btn-success btn-ghost" />
                 @endunless
             @endcan
@@ -56,5 +56,6 @@
 
     {{ $this->users->links(data: ['scrollTo' => false]) }}
 
-    <livewire:admin.users.delete wire />
+    <livewire:admin.users.delete />
+    <livewire:admin.users.restore />
 </div>
