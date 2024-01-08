@@ -3,6 +3,7 @@
 use App\Livewire\Admin;
 use App\Models\User;
 use App\Notifications\UserDeletedNotification;
+
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
@@ -23,6 +24,10 @@ it("should be able to delete a user", function () {
     assertSoftDeleted('users', [
         'id' => $forDeletion->id,
     ]);
+
+    $forDeletion->refresh();
+
+    expect($forDeletion)->deletedBy->id->toBe($user->id);
 });
 
 it("should have a confirmation before deletion", function () {

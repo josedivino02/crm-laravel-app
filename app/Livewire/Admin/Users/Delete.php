@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Users;
 use App\Models\User;
 use App\Notifications\UserDeletedNotification;
 use Illuminate\Contracts\View\View;
+
 use Livewire\Attributes\{On, Rule};
 use Livewire\Component;
 use Mary\Traits\Toast;
@@ -46,6 +47,9 @@ class Delete extends Component
         }
 
         $this->user->delete();
+        $this->user->deleted_by = auth()->user()->id;
+        $this->user->save();
+
         $this->user->notify(new UserDeletedNotification());
         $this->success('User deleted successfully');
         $this->dispatch('user::deleted');

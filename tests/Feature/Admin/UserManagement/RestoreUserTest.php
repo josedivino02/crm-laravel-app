@@ -6,7 +6,7 @@ use App\Notifications\UserRestoredAccessNotification;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
-use function Pest\Laravel\{actingAs, assertNotSoftDeleted, assertSoftDeleted, assertSoftRestored};
+use function Pest\Laravel\{actingAs, assertNotSoftDeleted, assertSoftDeleted};
 
 it("should be able to Restore a user", function () {
     $user           = User::factory()->admin()->create();
@@ -23,6 +23,10 @@ it("should be able to Restore a user", function () {
     assertNotSoftDeleted('users', [
         'id' => $forRestoration->id,
     ]);
+
+    $forRestoration->refresh();
+
+    expect($forRestoration)->restored_at->not->toBeNull()->restoredBy->id->toBe($user->id);
 });
 
 it("should have a confirmation before deletion", function () {
@@ -41,6 +45,7 @@ it("should have a confirmation before deletion", function () {
     assertSoftDeleted('users', [
         'id' => $forRestoration->id,
     ]);
+
 });
 
 it("should send a notification to the user telling him that he has again access to the application", function () {
