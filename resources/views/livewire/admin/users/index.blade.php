@@ -42,8 +42,10 @@
         @scope('actions', $user)
             @can(\App\Enum\Can::BE_AN_ADMIN->value)
                 @unless ($user->trashed())
-                    <x-button id="delete-btn-{{ $user->id }}" wire:key="delete-btn-{{ $user->id }}" icon="o-trash"
-                        wire:click="destroy('{{ $user->id }}')" spinner class="btn-sm" />
+                    @unless ($user->is(auth()->user()))
+                        <x-button id="delete-btn-{{ $user->id }}" wire:key="delete-btn-{{ $user->id }}" icon="o-trash"
+                            wire:click="destroy('{{ $user->id }}')" spinner class="btn-sm" />
+                    @endunless
                 @else
                     <x-button icon="o-arrow-path-rounded-square" wire:click="delete({{ $user->id }})" spinner
                         class="btn-sm btn-success btn-ghost" />

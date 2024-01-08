@@ -38,6 +38,13 @@ class Delete extends Component
     public function destroy(): void
     {
         $this->validate();
+
+        if ($this->user->is(auth()->user())) {
+            $this->addError('confirmation', "You can't delete yourself brow.");
+
+            return;
+        }
+
         $this->user->delete();
         $this->user->notify(new UserDeletedNotification());
         $this->success('User deleted successfully');
