@@ -3,7 +3,9 @@
 namespace App\Livewire\Admin\Users;
 
 use App\Enum\Can;
+
 use App\Models\{Permission, User};
+
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\{Builder, Collection};
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -119,5 +121,10 @@ class Index extends Component
     public function restore(int $id): void
     {
         $this->dispatch('user::restoring', userId: $id)->to('admin.users.restore');
+    }
+
+    public function showUser(int $id): void
+    {
+        $this->dispatch('user::show', id: $id)->to('admin.users.show');
     }
 }
