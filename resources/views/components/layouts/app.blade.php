@@ -11,6 +11,10 @@
 
 <body class="min-h-screen font-sans antialiased">
     <x-toast />
+    @if (session('impersonate'))
+        <livewire:admin.users.stop-impersonate />
+    @endif
+
     <x-main full-width>
         <x-slot:sidebar drawer="main-drawer" collapsible class="pt-3 bg-sky-800 text-white">
 

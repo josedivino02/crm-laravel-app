@@ -1,5 +1,7 @@
 <?php
 
+use App\Audit\ImpersonatorResolver;
+
 return [
 
     'enabled' => env('AUDITING_ENABLED', true),
@@ -11,7 +13,7 @@ return [
     |
     | Define which Audit model implementation should be used.
     |
-    */
+     */
 
     'implementation' => OwenIt\Auditing\Models\Audit::class,
 
@@ -22,7 +24,7 @@ return [
     |
     | Define the morph prefix and authentication guards for the User resolver.
     |
-    */
+     */
 
     'user' => [
         'morph_prefix' => 'user',
@@ -40,11 +42,12 @@ return [
     |
     | Define the IP Address, User Agent and URL resolver implementations.
     |
-    */
+     */
     'resolvers' => [
-        'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
-        'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
-        'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
+        'ip_address'        => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
+        'user_agent'        => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
+        'url'               => OwenIt\Auditing\Resolvers\UrlResolver::class,
+        'impersonated_user' => ImpersonatorResolver::class,
     ],
 
     /*
@@ -54,7 +57,7 @@ return [
     |
     | The Eloquent events that trigger an Audit.
     |
-    */
+     */
 
     'events' => [
         'created',
@@ -70,7 +73,7 @@ return [
     |
     | Enable the strict mode when auditing?
     |
-    */
+     */
 
     'strict' => false,
 
@@ -82,7 +85,7 @@ return [
     | Have something you always want to exclude by default? - add it here.
     | Note that this is overwritten (not merged) with local exclude
     |
-    */
+     */
 
     'exclude' => [],
 
@@ -99,7 +102,7 @@ return [
     | model retrieved events which will never have new and old values.
     |
     |
-    */
+     */
 
     'empty_values'         => true,
     'allowed_empty_values' => [
@@ -113,7 +116,7 @@ return [
     |
     | Should the created_at, updated_at and deleted_at timestamps be audited?
     |
-    */
+     */
 
     'timestamps' => false,
 
@@ -125,7 +128,7 @@ return [
     | Specify a threshold for the amount of Audit records a model can have.
     | Zero means no limit.
     |
-    */
+     */
 
     'threshold' => 0,
 
@@ -136,7 +139,7 @@ return [
     |
     | The default audit driver used to keep track of changes.
     |
-    */
+     */
 
     'driver' => 'database',
 
@@ -147,7 +150,7 @@ return [
     |
     | Available audit drivers and respective configurations.
     |
-    */
+     */
 
     'drivers' => [
         'database' => [
@@ -163,7 +166,7 @@ return [
     |
     | Available audit queue configurations.
     |
-    */
+     */
 
     'queue' => [
         'enable'     => false,
@@ -179,7 +182,7 @@ return [
     |
     | Whether console events should be audited (eg. php artisan db:seed).
     |
-    */
+     */
 
     'console' => false,
 ];
