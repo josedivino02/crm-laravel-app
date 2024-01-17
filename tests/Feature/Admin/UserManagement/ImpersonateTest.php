@@ -5,6 +5,7 @@ use App\Models\User;
 use Livewire\Livewire;
 
 use function Pest\Laravel\{actingAs, get};
+
 use function PHPUnit\Framework\{assertSame, assertTrue};
 
 it("should add a key impersonate to the session with the given user", function () {
@@ -90,4 +91,4 @@ it("should not be possible to impersonate myself", function () {
 
     Livewire::test(Impersonate::class)
         ->call('impersonate', $admin->id);
-})->throw(Exception::class);
+})->throws(Exception::class);
