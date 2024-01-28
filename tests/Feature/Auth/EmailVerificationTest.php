@@ -4,7 +4,7 @@ use App\Listeners\Auth\CreateValidationCode;
 use App\Models\User;
 use App\Notifications\Auth\ValidationCodeNotification;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\{Event, Notification};
 
 use function PHPUnit\Framework\assertTrue;
 
@@ -42,5 +42,10 @@ it("should send that new code to the user via email ", function () {
 });
 
 it("making sure that the listener to send the code is linked to the Registered event", function () {
+    Event::fake();
 
-})->todo();
+    Event::assertListening(
+        Registered::class,
+        CreateValidationCode::class
+    );
+});
