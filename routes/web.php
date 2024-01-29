@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/login', Login::class)->name('login');
 Route::get('/register', Register::class)->name('auth.register');
+Route::get('/email-validation', fn () => 'oi')->name('auth.email-validation');
 Route::get('/logout', Logout::class)->name('logout');
 Route::get('/password/recovery', Password\Recovery::class)->name('password.recovery');
 Route::get('/password/reset', Password\Reset::class)->name('password.reset');
