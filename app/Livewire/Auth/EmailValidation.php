@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Events\SendNewCode;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -24,5 +25,10 @@ class EmailValidation extends Component
                 }
             },
         ]);
+    }
+
+    public function sendNewCode(): void
+    {
+        SendNewCode::dispatch(auth()->user());
     }
 }
