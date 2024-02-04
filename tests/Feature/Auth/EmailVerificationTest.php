@@ -1,16 +1,18 @@
 <?php
 
 use App\Listeners\Auth\CreateValidationCode;
+
 use App\Livewire\Auth\{EmailValidation, Register};
 use App\Models\User;
 use App\Notifications\Auth\ValidationCodeNotification;
 use App\Notifications\WelcomeNotification;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
+
 use Illuminate\Support\Facades\{Event, Notification};
 use Livewire\Livewire;
 
-use function Pest\Laravel\actingAs;
+use function Pest\Laravel\{actingAs, get};
 use function PHPUnit\Framework\assertTrue;
 
 beforeEach(function () {
@@ -57,59 +59,73 @@ describe('after registration', function () {
     });
 });
 
-it("should redirect to the validation page after registration", function () {
-    Livewire::test(Register::class)
-        ->set('name', 'Jose Divino')
-        ->set('email', 'josedivino@divino.com')
-        ->set('email_confirmation', 'josedivino@divino.com')
-        ->set('password', 'password')
-        ->call('submit')
-        ->assertHasNoErrors()
-        ->assertRedirect(route('auth.email-validation'));
+describe('validation page', function () {
+    it("should redirect to the validation page after registration", function () {
+        Livewire::test(Register::class)
+            ->set('name', 'Jose Divino')
+            ->set('email', 'josedivino@divino.com')
+            ->set('email_confirmation', 'josedivino@divino.com')
+            ->set('password', 'password')
+            ->call('submit')
+            ->assertHasNoErrors()
+            ->assertRedirect(route('auth.email-validation'));
+    });
+
+    it("should check if the code is valid", function () {
+        $user = User::factory()->withValidationCode()->create();
+
+        actingAs($user);
+
+        Livewire::test(EmailValidation::class)
+            ->set('code', '000000')
+            ->call('handle')
+            ->assertHasErrors(['code']);
+    });
+
+    it("should be able to send a new code to the user", function () {
+        $user = User::factory()->withValidationCode()->create();
+
+        $oldCode = $user->validation_code;
+
+        actingAs($user);
+
+        Livewire::test(EmailValidation::class)
+            ->call('sendNewCode');
+
+        $user->refresh();
+
+        expect($user)->validation_code->not->toBe($oldCode);
+
+        Notification::assertSentTo($user, ValidationCodeNotification::class);
+    });
+
+    it("should update email_verified_at and delete the code if the code if valid", function () {
+        $user = User::factory()->withValidationCode()->create();
+
+        actingAs($user);
+
+        Livewire::test(EmailValidation::class)
+            ->set('code', $user->validation_code)
+            ->call('handle')
+            ->assertHasNoErrors()
+            ->assertRedirect(RouteServiceProvider::HOME);
+
+        expect($user)
+            ->email_verified_at->not->toBeNull()
+            ->validation_code->toBeNull();
+
+        Notification::assertSentTo($user, WelcomeNotification::class);
+    });
+
 });
 
-it("should check if the code is valid", function () {
-    $user = User::factory()->withValidationCode()->create();
+describe('middleware', function () {
+    it("should redirect to the email-verification if email_verified_at is null and the user is logged in", function () {
+        $user = User::factory()->withValidationCode()->create();
 
-    actingAs($user);
+        actingAs($user);
 
-    Livewire::test(EmailValidation::class)
-        ->set('code', '000000')
-        ->call('handle')
-        ->assertHasErrors(['code']);
-});
-
-it("should be able to send a new code to the user", function () {
-    $user = User::factory()->withValidationCode()->create();
-
-    $oldCode = $user->validation_code;
-
-    actingAs($user);
-
-    Livewire::test(EmailValidation::class)
-        ->call('sendNewCode');
-
-    $user->refresh();
-
-    expect($user)->validation_code->not->toBe($oldCode);
-
-    Notification::assertSentTo($user, ValidationCodeNotification::class);
-});
-
-it("should update email_verified_at and delete the code if the code if valid", function () {
-    $user = User::factory()->withValidationCode()->create();
-
-    actingAs($user);
-
-    Livewire::test(EmailValidation::class)
-        ->set('code', $user->validation_code)
-        ->call('handle')
-        ->assertHasNoErrors()
-        ->assertRedirect(RouteServiceProvider::HOME);
-
-    expect($user)
-        ->email_verified_at->not->toBeNull()
-        ->validation_code->toBeNull();
-
-    Notification::assertSentTo($user, WelcomeNotification::class);
+        get(route('dashboard'))
+            ->assertRedirect(route('auth.email-validation'));
+    });
 });

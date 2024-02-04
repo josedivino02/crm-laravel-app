@@ -1,7 +1,6 @@
 <?php
 
 use App\Enum\Can;
-
 use App\Livewire\Auth\{Login, Logout, Password, Register};
 use App\Livewire\{Admin, Welcome};
 use Illuminate\Support\Facades\Route;
@@ -13,7 +12,7 @@ Route::get('/logout', Logout::class)->name('logout');
 Route::get('/password/recovery', Password\Recovery::class)->name('password.recovery');
 Route::get('/password/reset', Password\Reset::class)->name('password.reset');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', Welcome::class)->name('dashboard');
 
     Route::prefix('/admin')->middleware('can:' . Can::BE_AN_ADMIN->value)->group(function () {
