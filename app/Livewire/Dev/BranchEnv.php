@@ -8,6 +8,16 @@ use Livewire\Component;
 
 class BranchEnv extends Component
 {
+    public function render(): string
+    {
+        return <<<'BLADE'
+            <div class="flex items-center space-x-2">
+                <x-badge :value="$this->branch"/>
+                <x-badge :value="$this->env" />
+            </div>
+            BLADE;
+    }
+
     #[Computed]
     public function env(): string
     {
@@ -22,13 +32,4 @@ class BranchEnv extends Component
         return trim($process->output()) ?: 'no branch';
     }
 
-    public function render(): string
-    {
-        return <<<'BLADE'
-            <div class="flex items-center space-x-2">
-                <x-badge :value="$this->branch"/>
-                <x-badge :value="$this->env" />
-            </div>
-            BLADE;
-    }
 }
