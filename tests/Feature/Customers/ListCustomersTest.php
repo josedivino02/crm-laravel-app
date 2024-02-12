@@ -2,6 +2,8 @@
 
 use App\Enum\Can;
 use App\Livewire\Admin;
+use App\Livewire\Customers;
+use App\Models\Customer;
 use App\Models\Permission;
 use App\Models\User;
 use function Pest\Laravel\actingAs;
@@ -16,20 +18,19 @@ it("should be able to access the route customers", function () {
 });
 
 test("let's create a livewire component to list all customers in the page", function () {
-    actingAs(User::factory()->admin()->create());
-    $customers = User::factory()->count(10)->create();
+    actingAs(User::factory()->create());
+    $customers = Customer::factory()->count(10)->create();
 
     $lw = Livewire::test(Customers\Index::class);
     $lw->assertSet('customers', function ($customers) {
         expect($customers)
-        // ->toBeInstanceOf(LengthAwarePaginator::class)
-            ->toHaveCount(11);
+            ->toHaveCount(10);
 
         return true;
     });
 
-    foreach ($customers as $user) {
-        $lw->assertSee($user->name);
+    foreach ($customers as $customer) {
+        $lw->assertSee($customer->name);
     };
 });
 
@@ -42,36 +43,6 @@ test("check the table format", function () {
             ['key' => 'name', 'label' => 'Name', 'sortColumnBy' => 'id', 'sortDirection' => 'asc'],
             ['key' => 'email', 'label' => 'Email', 'sortColumnBy' => 'id', 'sortDirection' => 'asc'],
         ]);
-});
-
-it("should be able to filter by permission.key", function () {
-    $admin = User::factory()->admin()->create(['name' => 'Divino', "email" => 'admin@gmail.com']);
-    $mario = User::factory()->create(['name' => 'Mario', 'email' => "little_guy@gmail.com"]);
-
-    actingAs($admin);
-
-    Livewire::test(Customers\Index::class)
-        ->assertSet('customers', function ($customers) {
-            expect($customers)->toHaveCount(2);
-
-            return true;
-        })
-        ->set('search', 'mar')
-        ->assertSet('customers', function ($customers) {
-            expect($customers)
-                ->toHaveCount(1)
-                ->first()->name->toBe("Mario");
-
-            return true;
-        })
-        ->set('search', 'guy')
-        ->assertSet('customers', function ($customers) {
-            expect($customers)
-                ->toHaveCount(1)
-                ->first()->name->toBe("Mario");
-
-            return true;
-        });
 });
 
 it("should be able to filter by name and email", function () {
@@ -90,27 +61,6 @@ it("should be able to filter by name and email", function () {
             return true;
         })
         ->set('search_permissions', [$permission->id, $permission2->id])
-        ->assertSet('customers', function ($customers) {
-            expect($customers)
-                ->toHaveCount(2);
-
-            return true;
-        });
-});
-
-it("should be able to list deleted customers", function () {
-    $admin = User::factory()->admin()->create(['name' => 'Divino', "email" => 'admin@gmail.com']);
-    $deletedcustomers = User::factory()->count(2)->create(['deleted_at' => now()]);
-
-    actingAs($admin);
-
-    Livewire::test(Customers\Index::class)
-        ->assertSet('customers', function ($customers) {
-            expect($customers)->toHaveCount(1);
-
-            return true;
-        })
-        ->set('search_trash', true)
         ->assertSet('customers', function ($customers) {
             expect($customers)
                 ->toHaveCount(2);
