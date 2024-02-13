@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', Welcome::class)->name('dashboard');
 
     Route::get('/customers', Customers\Index::class)->name('customers');
+    Route::get('/customers/{customer}', fn () => 'oi')->name('customers.show');
 
     Route::prefix('/admin')->middleware('can:' . Can::BE_AN_ADMIN->value)->group(function () {
         Route::get('/dashboard', Admin\Dashboard::class)->name('admin.dashboard');
