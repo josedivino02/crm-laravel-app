@@ -3,6 +3,8 @@
 namespace App\Traits\Livewire;
 
 use App\Support\Table\Header;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Computed;
 
 trait HasTable
@@ -16,6 +18,20 @@ trait HasTable
     public int $perPage = 15;
 
     abstract public function tableHeaders(): array;
+    abstract public function query(): Builder;
+    abstract public function searchColumns(): array;
+
+    #[Computed]
+    public function items(): LengthAwarePaginator
+    {
+        $query = $this->query();
+        /** @phpstan-ignore-next-line */
+        $query->search($this->search, $this->searchColumns());
+
+        return $query
+            ->orderBy($this->sortColumnBy, $this->sortDirection)
+            ->paginate($this->perPage);
+    }
 
     #[Computed]
     public function headers(): array
@@ -29,5 +45,11 @@ trait HasTable
                     'sortDirection' => $this->sortDirection,
                 ];
             })->toArray();
+    }
+
+    public function sortBy(string $column, string $direction): void
+    {
+        $this->sortColumnBy  = $column;
+        $this->sortDirection = $direction;
     }
 }
