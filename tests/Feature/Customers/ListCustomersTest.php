@@ -1,14 +1,11 @@
 <?php
 
-use App\Enum\Can;
-use App\Livewire\Admin;
-use App\Livewire\Customers;
-use App\Models\Customer;
-use App\Models\Permission;
-use App\Models\User;
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
-use Illuminate\Pagination\LengthAwarePaginator;use Livewire\Livewire;
+use App\Livewire\{Admin, Customers};
+use App\Models\{Customer, User};
+use Illuminate\Pagination\LengthAwarePaginator;
+use Livewire\Livewire;
+
+use function Pest\Laravel\{actingAs, get};
 
 it("should be able to access the route customers", function () {
     actingAs(User::factory()->create());
@@ -45,35 +42,42 @@ test("check the table format", function () {
         ]);
 });
 
-it("should be able to filter by name and email", function () {
-    $admin = User::factory()->admin()->create(['name' => 'Divino', "email" => 'admin@gmail.com']);
-    $nonAdmin = User::factory()->withPermission(Can::TESTING)->create(['name' => 'Mario', 'email' => "little_guy@gmail.com"]);
+it('should be able to filter by name and email', function () {
+    $user   = User::factory()->create();
+    $divino = Customer::factory()->create(['name' => 'Divino', 'email' => 'admin@gmail.com']);
+    $mario  = Customer::factory()->create(['name' => 'Mario', 'email' => 'little_guy@gmail.com']);
 
-    $permission = Permission::where('key', '=', Can::BE_AN_ADMIN->value)->first();
-    $permission2 = Permission::where('key', '=', Can::TESTING->value)->first();
-
-    actingAs($admin);
-
+    actingAs($user);
     Livewire::test(Customers\Index::class)
         ->assertSet('customers', function ($customers) {
             expect($customers)->toHaveCount(2);
 
             return true;
         })
-        ->set('search_permissions', [$permission->id, $permission2->id])
+        ->set('search', 'mar')
         ->assertSet('customers', function ($customers) {
             expect($customers)
-                ->toHaveCount(2);
+                ->toHaveCount(1)
+                ->first()->name->toBe('Mario');
+
+            return true;
+        })
+        ->set('search', 'guy')
+        ->assertSet('customers', function ($customers) {
+            expect($customers)
+                ->toHaveCount(1)
+                ->first()->name->toBe('Mario');
 
             return true;
         });
 });
 
 it("should be able to sort by name", function () {
-    $admin = User::factory()->admin()->create(['name' => 'Divino', "email" => 'admin@gmail.com']);
-    $nonAdmin = User::factory()->withPermission(Can::TESTING)->create(['name' => 'Mario', 'email' => "little_guy@gmail.com"]);
+    $user   = User::factory()->create();
+    $divino = Customer::factory()->create(['name' => 'Divino', 'email' => 'admin@gmail.com']);
+    $mario  = Customer::factory()->create(['name' => 'Mario', 'email' => 'little_guy@gmail.com']);
 
-    actingAs($admin);
+    actingAs($user);
 
     Livewire::test(Customers\Index::class)
         ->set('sortDirection', 'asc')
@@ -97,10 +101,18 @@ it("should be able to sort by name", function () {
 });
 
 it("should be able to paginate the result", function () {
-    $admin = User::factory()->admin()->create(['name' => 'Divino', "email" => 'admin@gmail.com']);
-    $nonAdmin = User::factory()->withPermission(Can::TESTING)->count(30)->create();
+    $user = User::factory()->create();
+    Customer::factory()->create(['name' => 'Divino', 'email' => 'admin@gmail.com']);
+    Customer::factory()->count(30)->create();
 
-    actingAs($admin);
+    actingAs($user);
+    Livewire::test(Customers\Index::class)
+        ->assertSet('customers', function (LengthAwarePaginator $customers) {
+            expect($customers)
+                ->toHaveCount(15);
+
+            return true;
+        });
 
     Livewire::test(Customers\Index::class)
         ->set('perPage', 20)
