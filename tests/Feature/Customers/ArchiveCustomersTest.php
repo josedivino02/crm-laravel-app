@@ -2,7 +2,7 @@
 
 use App\Livewire\Customers;
 use App\Models\Customer;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Livewire;
 
 use function Pest\Laravel\assertSoftDeleted;
@@ -60,8 +60,7 @@ it("should list archived items", function () {
                 ->and(
                     collect($items->items())
                         ->filter(fn (Customer $customer) => $customer->id == $archived->id)
-                )
-                ->toBeEmpty();
+                )->toBeEmpty();
 
             return true;
         })
@@ -71,9 +70,8 @@ it("should list archived items", function () {
                 ->and(
                     collect($items->items())
                         ->filter(fn (Customer $customer) => $customer->id == $archived->id)
-                )
-                ->toBeEmpty();
+                )->not->toBeEmpty();
 
             return true;
-        })->not->toBeEmpty();
+        });
 });
