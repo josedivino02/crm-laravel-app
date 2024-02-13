@@ -1,9 +1,8 @@
 <?php
 
 use App\Enum\Can;
-
 use App\Livewire\Auth\{EmailValidation, Login, Logout, Password, Register};
-use App\Livewire\{Admin, Welcome};
+use App\Livewire\{Admin, Customers, Welcome};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', Login::class)->name('login');
@@ -15,6 +14,8 @@ Route::get('/password/reset', Password\Reset::class)->name('password.reset');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', Welcome::class)->name('dashboard');
+
+    Route::get('/customers', Customers\Index::class)->name('customers');
 
     Route::prefix('/admin')->middleware('can:' . Can::BE_AN_ADMIN->value)->group(function () {
         Route::get('/dashboard', Admin\Dashboard::class)->name('admin.dashboard');
