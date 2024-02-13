@@ -14,6 +14,9 @@
                 ['id' => 25, 'name' => 25],
                 ['id' => 50, 'name' => 50],
             ]" label="Records Per Page" />
+
+            <x-checkbox class="mb-4" label="Show Archived Customers" wire:model.live="search_trash"
+                class="checkbox-primary" right tight />
         </div>
 
 
