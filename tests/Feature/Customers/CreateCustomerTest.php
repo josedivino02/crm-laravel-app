@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Customers;
+
 use App\Models\{Customer, User};
 use Livewire\Livewire;
 
@@ -14,9 +15,13 @@ beforeEach(function () {
 it("should be able to create a customer", function () {
     Livewire::test(Customers\Create::class)
         ->set('name', 'Divino')
+        ->assertPropertyWired('name')
         ->set('email', 'jose@divino.com')
+        ->assertPropertyWired('email')
         ->set('phone', '123456789')
+        ->assertPropertyWired('phone')
         ->call('save')
+        ->assertMethodWiredToForm('save')
         ->assertHasNoErrors();
 
     assertDatabaseHas('customers', [
@@ -98,4 +103,9 @@ describe('validations', function () {
             ->assertHasErrors(['phone' => 'unique']);
 
     });
+});
+
+test("check if component is in the page", function () {
+    Livewire::test(Customers\Index::class)
+        ->assertContainsLivewireComponent('customers.create');
 });

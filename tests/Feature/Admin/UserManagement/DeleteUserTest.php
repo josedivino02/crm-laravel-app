@@ -73,6 +73,7 @@ it("should not be possible to delete the logger user", function () {
         ->set('user', $user)
         ->set('confirmation_confirmation', 'CONFIRMAR D')
         ->call('destroy')
+        ->assertMethodWired('destroy')
         ->assertHasErrors(['confirmation'])
         ->assertNotDispatched('user::deleted');
 
@@ -80,4 +81,11 @@ it("should not be possible to delete the logger user", function () {
         'id' => $user->id,
     ]);
 
+});
+
+test("check if component is in the page", function () {
+    actingAs(User::factory()->admin()->create());
+
+    Livewire::test(Admin\Users\Index::class)
+        ->assertContainsLivewireComponent('admin.users.delete');
 });
