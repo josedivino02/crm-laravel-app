@@ -12,7 +12,8 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.3",
         "owen-it/laravel-auditing": "^13.6",
-        "robsontenorio/mary": "^1.12"
+        "robsontenorio/mary": "^1.12",
+        "symfony/symfony": "^6.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.9",
