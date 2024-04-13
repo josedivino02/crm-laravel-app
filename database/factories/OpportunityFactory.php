@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Traits\Factory\HasDeleted;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,11 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class OpportunityFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    use HasDeleted;
+
     public function definition(): array
     {
         return [

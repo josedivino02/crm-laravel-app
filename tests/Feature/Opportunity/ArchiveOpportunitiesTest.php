@@ -1,65 +1,64 @@
 <?php
 
-use App\Livewire\Customers;
-use App\Models\Customer;
+use App\Livewire\Opportunities;
+use App\Models\Opportunity;
+use function Pest\Laravel\assertSoftDeleted;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Livewire;
 
-use function Pest\Laravel\assertSoftDeleted;
+it("should be able to archive a opportunity", function () {
+    $opportunity = Opportunity::factory()->create();
 
-it("should be able to archive a customer", function () {
-    $customer = Customer::factory()->create();
-
-    Livewire::test(Customers\Archive::class)
-        ->set('customer', $customer)
+    Livewire::test(Opportunities\Archive::class)
+        ->set('opportunity', $opportunity)
         ->call('archive');
 
-    assertSoftDeleted('customers', [
-        'id' => $customer->id,
+    assertSoftDeleted('opportunitys', [
+        'id' => $opportunity->id,
     ]);
 });
 
-test("when confirming we should load the customer and set modal to true", function () {
-    $customer = Customer::factory()->create();
+test("when confirming we should load the opportunity and set modal to true", function () {
+    $opportunity = Opportunity::factory()->create();
 
-    Livewire::test(Customers\Archive::class)
-        ->call('confirmAction', $customer->id)
-        ->assertSet('customer.id', $customer->id)
+    Livewire::test(Opportunities\Archive::class)
+        ->call('confirmAction', $opportunity->id)
+        ->assertSet('opportunity.id', $opportunity->id)
         ->assertSet('modal', true);
 
 });
 
 test("after archiving we should disparch an event to tell the list to reload", function () {
-    $customer = Customer::factory()->create();
+    $opportunity = Opportunity::factory()->create();
 
-    Livewire::test(Customers\Archive::class)
-        ->set('customer', $customer)
+    Livewire::test(Opportunities\Archive::class)
+        ->set('opportunity', $opportunity)
         ->call('archive')
-        ->assertDispatched('customer::reload');
+        ->assertDispatched('Opportunity::reload');
 
 });
 
 test("after archiving we should close the modal", function () {
-    $customer = Customer::factory()->create();
+    $opportunity = Opportunity::factory()->create();
 
-    Livewire::test(Customers\Archive::class)
-        ->set('customer', $customer)
+    Livewire::test(Opportunities\Archive::class)
+        ->set('opportunity', $opportunity)
         ->call('archive')
         ->assertSet('modal', false);
 
 });
 
 it("should list archived items", function () {
-    Customer::factory()->count(2)->create();
-    $archived = Customer::factory()->deleted()->create();
+    Opportunity::factory()->count(2)->create();
+    $archived = Opportunity::factory()->deleted()->create();
 
-    Livewire::test(Customers\Index::class)
+    Livewire::test(Opportunities\Index::class)
         ->set('search_trash', false)
         ->assertSet('items', function (LengthAwarePaginator $items) use ($archived) {
             expect($items->items())->toHaveCount(2)
                 ->and(
                     collect($items->items())
-                        ->filter(fn (Customer $customer) => $customer->id == $archived->id)
+                        ->filter(fn(opportunity $opportunity) => $opportunity->id == $archived->id)
                 )->toBeEmpty();
 
             return true;
@@ -69,9 +68,19 @@ it("should list archived items", function () {
             expect($items->items())->toHaveCount(1)
                 ->and(
                     collect($items->items())
-                        ->filter(fn (Customer $customer) => $customer->id == $archived->id)
+                        ->filter(fn(opportunity $opportunity) => $opportunity->id == $archived->id)
                 )->not->toBeEmpty();
 
             return true;
         });
+});
+
+test('making sure archive method is wired', function () {
+    Livewire::test(Opportunities\Archive::class)
+        ->assertMethodWired('archive');
+});
+
+test('check if component is in the page', function () {
+    Livewire::test(Opportunities\Index::class)
+        ->assertContainsLivewireComponent('opportunities.archive');
 });
