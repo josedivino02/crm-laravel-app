@@ -4,7 +4,7 @@
     <div class="mb-4 flex items-end justify-between">
         <div class="w-full flex space-x-4 items-end">
             <div class="w-1/3">
-                <x-input icon="o-magnifying-glass" label="Search by title" placeholder="Search by email and name"
+                <x-input icon="o-magnifying-glass" label="Search by title" placeholder="Search by title"
                     wire:model.live="search" />
             </div>
 
