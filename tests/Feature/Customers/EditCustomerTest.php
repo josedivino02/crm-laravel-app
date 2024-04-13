@@ -84,6 +84,12 @@ describe('validations', function () {
             ->set('form.email', 'jose@divino.com')
             ->call('save')
             ->assertHasErrors(['email' => 'unique']);
+
+        Livewire::test(Customers\Update::class)
+            ->call('load', $this->customer->id)
+            ->set('form.email', $this->customer->email)
+            ->call('save')
+            ->assertHasNoErrors(['email' => 'unique']);
     });
 
     test('phone should be required if email is empty', function () {
@@ -111,6 +117,12 @@ describe('validations', function () {
             ->set('form.phone', '123456789')
             ->call('save')
             ->assertHasErrors(['phone' => 'unique']);
+
+        Livewire::test(Customers\Update::class)
+            ->call('load', $this->customer->id)
+            ->set('form.phone', $this->customer->phone)
+            ->call('save')
+            ->assertHasNoErrors(['phone' => 'unique']);
 
     });
 });
