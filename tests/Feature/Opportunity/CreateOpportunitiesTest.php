@@ -1,7 +1,6 @@
 <?php
 
-use App\Livewire\Customers;
-use App\Models\Customer;
+use App\Livewire\Opportunities;
 use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -13,99 +12,59 @@ beforeEach(function () {
 });
 
 it("should be able to create a customer", function () {
-    Livewire::test(Customers\Create::class)
-        ->set('form.name', 'Divino')
-        ->assertPropertyWired('form.name')
-        ->set('form.email', 'jose@divino.com')
-        ->assertPropertyWired('form.email')
-        ->set('form.phone', '123456789')
-        ->assertPropertyWired('form.phone')
+    Livewire::test(Opportunities\Create::class)
+        ->set('form.title', 'Divino')
+        ->assertPropertyWired('form.title')
+        ->set('form.status', 'won')
+        ->assertPropertyWired('form.status')
+        ->set('form.amount', '123456789')
+        ->assertPropertyWired('form.amount')
         ->call('save')
         ->assertMethodWiredToForm('save')
         ->assertHasNoErrors();
 
-    assertDatabaseHas('customers', [
-        'name' => 'Divino',
-        'email' => 'jose@divino.com',
-        'phone' => '123456789',
-        'type' => 'customer',
+    assertDatabaseHas('opportunities', [
+        'title' => 'Divino',
+        'status' => 'won',
+        'amount' => '123456789',
     ]);
 });
 
 describe('validations', function () {
-    test('name', function ($rule, $value) {
-        Livewire::test(Customers\Create::class)
-            ->set('form.name', $value)
+    test('title', function ($rule, $value) {
+        Livewire::test(Opportunities\Create::class)
+            ->set('form.title', $value)
             ->call('save')
-            ->assertHasErrors(['name' => $rule]);
+            ->assertHasErrors(['title' => $rule]);
     })->with([
         'required' => ['required', ''],
         'min' => ['min', 'Jo'],
         'max' => ['max', str_repeat('a', 256)],
     ]);
 
-    test('email should be required if we dont have a phone number', function () {
-        Livewire::test(Customers\Create::class)
-            ->set('form.email', '')
-            ->set('form.phone', '')
+    test('status', function ($rule, $value) {
+        Livewire::test(Opportunities\Create::class)
+            ->set('form.status', $value)
             ->call('save')
-            ->assertHasErrors(['email' => 'required_without']);
+            ->assertHasErrors(['title' => $rule]);
+    })->with([
+        'required' => ['required', ''],
+        'in' => ['in', 'Jo'],
+    ]);
 
-        Livewire::test(Customers\Create::class)
-            ->set('form.email', '')
-            ->set('form.phone', '1232132')
+    test('amount', function ($rule, $value) {
+        Livewire::test(Opportunities\Create::class)
+            ->set('form.amount', $value)
             ->call('save')
-            ->assertHasNoErrors(['email' => 'required_without']);
-    });
+            ->assertHasErrors(['title' => $rule]);
+    })->with([
+        'required' => ['required', ''],
+        'numeric' => ['numeric', 'non-numeric'],
+    ]);
 
-    test('email should be valid', function () {
-        Livewire::test(Customers\Create::class)
-            ->set('form.email', 'invalid-email')
-            ->call('save')
-            ->assertHasErrors(['email' => 'email']);
-
-        Livewire::test(Customers\Create::class)
-            ->set('form.email', 'jose@divino.com')
-            ->call('save')
-            ->assertHasNoErrors(['email' => 'email']);
-    });
-
-    test('email should be unique', function () {
-        Customer::factory()->create(['email' => 'jose@divino.com']);
-
-        Livewire::test(Customers\Create::class)
-            ->set('form.email', 'jose@divino.com')
-            ->call('save')
-            ->assertHasErrors(['email' => 'unique']);
-    });
-
-    test('phone should be required if email is empty', function () {
-        Livewire::test(Customers\Create::class)
-            ->set('form.email', '')
-            ->set('form.phone', '')
-            ->call('save')
-            ->assertHasErrors(['phone' => 'required_without']);
-
-        Livewire::test(Customers\Create::class)
-            ->set('form.email', 'jose@divino.com')
-            ->set('form.phone', '')
-            ->call('save')
-            ->assertHasNoErrors(['phone' => 'required_without']);
-    });
-
-    test('phone should be unique', function () {
-
-        Customer::factory()->create(['phone' => '123456789']);
-
-        Livewire::test(Customers\Create::class)
-            ->set('form.phone', '123456789')
-            ->call('save')
-            ->assertHasErrors(['phone' => 'unique']);
-
-    });
 });
 
 test('check if component is in the page', function () {
-    Livewire::test(Customers\Index::class)
-        ->assertContainsLivewireComponent('customers.create');
+    Livewire::test(Opportunities\Index::class)
+        ->assertContainsLivewireComponent('opportunities.create');
 });
