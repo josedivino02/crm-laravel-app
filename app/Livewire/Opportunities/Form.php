@@ -10,14 +10,14 @@ class Form extends BaseForm
 {
     public ?Opportunity $opportunity = null;
 
-    #[Validate('required', 'min:3', 'max:255')]
+    #[Validate(['required', 'min:3', 'max:255'])]
     public string $title = '';
 
-    #[Validate('required', 'in:open,won,lost')]
+    #[Validate(['required', 'in:open,won,lost'])]
     public string $status = '';
 
-    #[Validate('required', 'numeric')]
-    public int $amount = 0;
+    #[Validate(['required', 'numeric'])]
+    public ?string $amount = null;
 
     public function setOpportunity(Opportunity $opportunity): void
     {
