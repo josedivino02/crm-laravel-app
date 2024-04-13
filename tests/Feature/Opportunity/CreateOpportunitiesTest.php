@@ -60,7 +60,6 @@ describe('validations', function () {
     })->with([
         'required' => ['required', ''],
     ]);
-
 });
 
 test('check if component is in the page', function () {
