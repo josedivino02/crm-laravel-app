@@ -39,6 +39,7 @@
         @scope('cell_status', $header)
             <x-badge :value="$item->status" @class([
                 'badge-outline',
+                'badge-small',
                 'badge-success' => $item->status === 'won',
                 'badge-info' => $item->status === 'open',
                 'badge-error' => $item->status === 'lost',
