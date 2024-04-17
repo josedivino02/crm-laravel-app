@@ -6,9 +6,6 @@ use App\Models\Customer;
 use App\Traits\Factory\HasDeleted;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Opportunity>
- */
 class OpportunityFactory extends Factory
 {
     use HasDeleted;
@@ -17,9 +14,9 @@ class OpportunityFactory extends Factory
     {
         return [
             'customer_id' => Customer::factory(),
-            'title' => $this->faker->sentence(),
-            'status' => $this->faker->randomElement(['open', 'won', 'lost']),
-            'title' => $this->faker->numberBetween(1000, 100000),
+            'title'       => $this->faker->sentence(),
+            'status'      => $this->faker->randomElement(['open', 'won', 'lost']),
+            'title'       => $this->faker->numberBetween(1000, 100000),
         ];
     }
 }
