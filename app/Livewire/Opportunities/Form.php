@@ -19,6 +19,9 @@ class Form extends BaseForm
     #[Validate(['required'])]
     public ?string $amount = null;
 
+    #[Validate(['required', 'exists:customers,id'])]
+    public ?int $customer_id = null;
+
     public function setOpportunity(Opportunity $opportunity): void
     {
         $this->opportunity = $opportunity;
@@ -33,6 +36,7 @@ class Form extends BaseForm
         $this->validate();
 
         Opportunity::create([
+            'customer_id' => $this->customer_id,
             'title' => $this->title,
             'status' => $this->status,
             'amount' => $this->getAmountAsInt(),
