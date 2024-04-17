@@ -1,21 +1,23 @@
 <?php
 
 use App\Livewire\Opportunities;
-use App\Models\{Opportunity, User};
-use Livewire\Livewire;
-
-use function Pest\Laravel\{actingAs, assertDatabaseHas};
+use App\Models\Customer;
+use App\Models\Opportunity;
+use App\Models\User;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;use Livewire\Livewire;
 
 beforeEach(function () {
     actingAs(User::factory()->Update());
     $this->opportunity = Opportunity::factory()->create();
 });
 
-it("should be able to update a customer", function () {
+it("should be able to update a opportunity", function () {
+    $customer = Customer::factory()->create();
+
     Livewire::test(Opportunities\Create::class)
         ->call('load', $this->opportunity->id)
         ->set('form.customer_id', $this->opportunity->customer_id)
-        ->assertPropertyWired('form.customer_id')
         ->set('form.title', 'Divino')
         ->assertPropertyWired('form.title')
         ->set('form.status', 'won')
@@ -27,7 +29,9 @@ it("should be able to update a customer", function () {
         ->assertHasNoErrors();
 
     assertDatabaseHas('opportunities', [
-        'title'  => 'Divino',
+        'id' => $this->opportunity->id,
+        'customer_id' => $customer->id,
+        'title' => 'Divino',
         'status' => 'won',
         'amount' => '123.45',
     ]);
@@ -42,8 +46,8 @@ describe('validations', function () {
             ->assertHasErrors(['title' => $rule]);
     })->with([
         'required' => ['required', ''],
-        'min'      => ['min', 'Jo'],
-        'max'      => ['max', str_repeat('a', 256)],
+        'min' => ['min', 'Jo'],
+        'max' => ['max', str_repeat('a', 256)],
     ]);
 
     test('status', function ($rule, $value) {
@@ -54,7 +58,7 @@ describe('validations', function () {
             ->assertHasErrors(['title' => $rule]);
     })->with([
         'required' => ['required', ''],
-        'in'       => ['in', 'Jo'],
+        'in' => ['in', 'Jo'],
     ]);
 
     test('amount', function ($rule, $value) {

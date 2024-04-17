@@ -26,6 +26,7 @@ class Form extends BaseForm
     {
         $this->opportunity = $opportunity;
 
+        $this->customer_id = $opportunity->customer_id;
         $this->title = $opportunity->title;
         $this->status = $opportunity->status;
         $this->amount = (string) ($opportunity->amount / 100);
@@ -49,6 +50,7 @@ class Form extends BaseForm
     {
         $this->validate();
 
+        $this->opportunity->customer_id = $this->customer_id;
         $this->opportunity->title = $this->title;
         $this->opportunity->status = $this->status;
         $this->opportunity->amount = $this->getAmountAsInt();
@@ -64,6 +66,6 @@ class Form extends BaseForm
             $amount = 0;
         }
 
-        return (int) ($this->amount * 100);
+        return (int) ($amount * 100);
     }
 }

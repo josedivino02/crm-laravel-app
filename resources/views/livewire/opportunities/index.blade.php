@@ -51,7 +51,7 @@
         @endscope
 
         @scope('cell_amount', $header)
-            R$ {{ number_format($item->amout / 100, 2, ',', '.') }}
+            <div class="whitespace-nowrap text-right"> R$ {{ number_format($item->amout / 100, 2, ',', '.') }}</div>
         @endscope
 
 
