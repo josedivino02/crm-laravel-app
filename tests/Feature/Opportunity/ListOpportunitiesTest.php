@@ -2,6 +2,7 @@
 
 use App\Livewire\Admin;
 use App\Livewire\Opportunities;
+use App\Models\Customer;
 use App\Models\Opportunity;
 use App\Models\User;
 use function Pest\Laravel\actingAs;
@@ -39,6 +40,7 @@ test("check the table format", function () {
         ->assertSet('headers', [
             ['key' => 'id', 'label' => '#', 'sortColumnBy' => 'id', 'sortDirection' => 'asc'],
             ['key' => 'title', 'label' => 'Title', 'sortColumnBy' => 'id', 'sortDirection' => 'asc'],
+            ['key' => 'customer.name', 'label' => 'Customer', 'sortColumnBy' => 'id', 'sortDirection' => 'asc'],
             ['key' => 'status', 'label' => 'Status', 'sortColumnBy' => 'id', 'sortDirection' => 'asc'],
             ['key' => 'amount', 'label' => 'Amount', 'sortColumnBy' => 'id', 'sortDirection' => 'asc'],
         ]);
@@ -68,8 +70,9 @@ it('should be able to filter by title', function () {
 
 it("should be able to sort by title", function () {
     $user = User::factory()->create();
-    $divino = Opportunity::factory()->create(['title' => 'Divino']);
-    $mario = Opportunity::factory()->create(['title' => 'Mario']);
+    $customer = Customer::factory()->create(['name' => 'Zack']);
+    $divino = Opportunity::factory()->create(['title' => 'Divino', 'customer_id' => $customer->id]);
+    $mario = Opportunity::factory()->create(['title' => 'Mario', 'customer_id' => $customer->id]);
 
     actingAs($user);
 

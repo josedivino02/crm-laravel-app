@@ -10,7 +10,6 @@ use Livewire\Component;
 class Update extends Component
 {
     public Form $form;
-    public Customer $customer;
 
     public bool $modal = false;
 

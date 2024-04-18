@@ -1,18 +1,22 @@
 <?php
 
 use App\Livewire\Opportunities;
-use App\Models\User;
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseHas;
+use App\Models\{Customer, User};
 use Livewire\Livewire;
+
+use function Pest\Laravel\{actingAs, assertDatabaseHas};
 
 beforeEach(function () {
     $user = User::factory()->create();
     actingAs($user);
 });
 
-it("should be able to create a customer", function () {
+it("should be able to create a opportunity", function () {
+    $customer = Customer::factory()->create();
+    ;
+
     Livewire::test(Opportunities\Create::class)
+        ->set('form.customer_id', $customer->id)
         ->set('form.title', 'Divino')
         ->assertPropertyWired('form.title')
         ->set('form.status', 'won')
@@ -24,13 +28,24 @@ it("should be able to create a customer", function () {
         ->assertHasNoErrors();
 
     assertDatabaseHas('opportunities', [
-        'title' => 'Divino',
-        'status' => 'won',
-        'amount' => '123.45',
+        'customer_id' => $customer->id,
+        'title'       => 'Divino',
+        'status'      => 'won',
+        'amount'      => '123.45',
     ]);
 });
 
 describe('validations', function () {
+    test('customer', function ($rule, $value) {
+        Livewire::test(Opportunities\Create::class)
+            ->set('form.customer_id' . $value)
+            ->call('save')
+            ->assertHasErrors(['customer_id' => $rule]);
+    })->with([
+        'required' => ['required', ''],
+        'exists'   => ['exists', 9430],
+    ]);
+
     test('title', function ($rule, $value) {
         Livewire::test(Opportunities\Create::class)
             ->set('form.title', $value)
@@ -38,8 +53,8 @@ describe('validations', function () {
             ->assertHasErrors(['title' => $rule]);
     })->with([
         'required' => ['required', ''],
-        'min' => ['min', 'Jo'],
-        'max' => ['max', str_repeat('a', 256)],
+        'min'      => ['min', 'Jo'],
+        'max'      => ['max', str_repeat('a', 256)],
     ]);
 
     test('status', function ($rule, $value) {
@@ -49,7 +64,7 @@ describe('validations', function () {
             ->assertHasErrors(['title' => $rule]);
     })->with([
         'required' => ['required', ''],
-        'in' => ['in', 'Jo'],
+        'in'       => ['in', 'Jo'],
     ]);
 
     test('amount', function ($rule, $value) {

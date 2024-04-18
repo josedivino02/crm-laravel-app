@@ -39,6 +39,7 @@
         @scope('cell_status', $header)
             <x-badge :value="$item->status" @class([
                 'badge-outline',
+                'badge-small',
                 'badge-success' => $item->status === 'won',
                 'badge-info' => $item->status === 'open',
                 'badge-error' => $item->status === 'lost',
@@ -50,7 +51,7 @@
         @endscope
 
         @scope('cell_amount', $header)
-            R$ {{ number_format($item->amout / 100, 2, ',', '.') }}
+            <div class="whitespace-nowrap text-right"> R$ {{ number_format($item->amout / 100, 2, ',', '.') }}</div>
         @endscope
 
 
