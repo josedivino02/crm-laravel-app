@@ -5,10 +5,17 @@ namespace App\Livewire\Opportunities;
 use App\Models\Opportunity;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
+/**
+ * @property-read Collection|Opportunity[] $opportunities
+ * @property-read Collection|Opportunity[] $opens
+ * @property-read Collection|Opportunity[] $wons
+ * @property-read Collection|Opportunity[] $losts
+ */
 class Board extends Component
 {
     public function render(): View
@@ -20,47 +27,82 @@ class Board extends Component
     public function opportunities(): Collection
     {
         return Opportunity::query()
-            ->orderByRaw("field(status, 'open', 'won', 'lost')")
+            ->orderByRaw("field(status, 'open','won', 'lost')")
             ->orderBy('sort_order')
             ->get();
     }
 
-    public function updateOpportunities($data)
+    #[Computed]
+    public function opens(): Collection
     {
+        return $this->opportunities
+            ->where('status', '=', 'open');
+    }
 
+    #[Computed]
+    public function wons(): Collection
+    {
+        return $this->opportunities
+            ->where('status', '=', 'won');
+    }
+
+    #[Computed]
+    public function losts(): Collection
+    {
+        return $this->opportunities
+            ->where('status', '=', 'lost');
+    }
+
+    public function updateOpportunities(array $data): void
+    {
+        $order = $this->getItemsInOrder($data);
+        $this->updateStatuses($order);
+        $this->updateSortOrders($order);
+    }
+
+    private function getItemsInOrder(array $data): SupportCollection
+    {
         $order = collect();
 
         foreach ($data as $group) {
             $order->push(
-                collect($group["items"])
-                    ->map(fn ($i) => $i["value"])
-                    ->join(",")
+                collect($group['items'])
+                    ->map(fn ($i) => $i['value'])
+                    ->join(',')
             );
         }
 
-        $open = explode(",", $order[0]);
-        $won  = explode(",", $order[1]);
-        $lost = explode(",", $order[2]);
+        return $order;
+    }
 
-        $sortOrder = $order->join(",");
+    private function updateStatuses(SupportCollection $collection): void
+    {
+        foreach (['open', 'won', 'lost'] as $status) {
+            $this->updateStatus($status, $collection);
+        }
+    }
 
-        DB::table("opportunities")->whereIn('id', $open)->update(["status" => "open"]);
-        DB::table("opportunities")->whereIn('id', $won)->update(["status" => "won"]);
-        DB::table("opportunities")->whereIn('id', $lost)->update(["status" => "lost"]);
-        DB::table("opportunities")->update(["sort_order" => DB::raw("field(id, $sortOrder)")]);
+    private function updateStatus(string $status, SupportCollection $collection): void
+    {
+        $id = match ($status) {
+            'open'  => 0,
+            'won'   => 1,
+            'lost'  => 2,
+            default => null
+        };
 
-        // foreach ($data as $group) {
-        //     $status = $group['value'];
-        //     $items = $group['items'];
+        $list = $collection[$id];
+        $ids  = explode(',', $list);
 
-        //     foreach ($items as $item) {
-        //         $order = $item['order'];
-        //         $id = (int) $item['value'];
+        if (filled($list)) {
+            DB::table('opportunities')->whereIn('id', $ids)->update(['status' => $status]);
+        }
+    }
 
-        //         Opportunity::query()
-        //             ->whereId($id)
-        //             ->update(['sort_order' => $order, 'status' => $status]);
-        //     }
-        // }
+    private function updateSortOrders(SupportCollection $collection): void
+    {
+        $sortOrder = $collection->filter(fn ($f) => filled($f))->join(',');
+
+        DB::table('opportunities')->update(['sort_order' => DB::raw("field(id, $sortOrder)")]);
     }
 }
