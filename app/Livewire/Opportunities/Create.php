@@ -7,7 +7,6 @@ use Livewire\Component;
 
 class Create extends Component
 {
-
     public Form $form;
 
     public bool $modal = false;
@@ -21,15 +20,20 @@ class Create extends Component
     public function open(): void
     {
         $this->form->resetErrorBag();
+        $this->form->searchCustomers();
         $this->modal = true;
     }
 
     public function save()
     {
-
         $this->form->create();
 
         $this->modal = false;
         $this->dispatch("opportunity::reload")->to("opportunities.index");
+    }
+
+    public function search(string $value = ''): void
+    {
+        $this->form->searchCustomers($value);
     }
 }
