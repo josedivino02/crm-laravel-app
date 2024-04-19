@@ -12,7 +12,7 @@ it("should be able to restore a customer", function () {
         ->set('opportunity', $opportunity)
         ->call('restore');
 
-    assertNotSoftDeleted('opportunity', [
+    assertNotSoftDeleted('opportunities', [
         'id' => $opportunity->id,
     ]);
 });
@@ -23,18 +23,17 @@ test("when confirming we should load the opportunity and set modal to true", fun
     Livewire::test(Opportunities\Restore::class)
         ->call('confirmAction', $opportunity->id)
         ->assertSet('opportunity.id', $opportunity->id)
-        ->assertSet('modal', true);
-
+        ->assertSet('modal', true)
+        ->assertPropertyEntangled('modal');
 });
 
-test("after restoring we should disparch an event to tell the list to reload", function () {
+test('after restoring we should dispatch an event to tell the list to reload', function () {
     $opportunity = Opportunity::factory()->deleted()->create();
 
     Livewire::test(Opportunities\Restore::class)
         ->set('opportunity', $opportunity)
         ->call('restore')
-        ->assertDispatched('Opportunity::reload');
-
+        ->assertDispatched('opportunity::reload');
 });
 
 test("after restoring we should close the modal", function () {
@@ -44,5 +43,14 @@ test("after restoring we should close the modal", function () {
         ->set('opportunity', $opportunity)
         ->call('restore')
         ->assertSet('modal', false);
+});
 
+test('making sure restore method is wired', function () {
+    Livewire::test(Opportunities\Restore::class)
+        ->assertMethodWired('restore');
+});
+
+test('check if component is in the page', function () {
+    Livewire::test(Opportunities\Index::class)
+        ->assertContainsLivewireComponent('opportunities.restore');
 });

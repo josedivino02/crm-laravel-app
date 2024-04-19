@@ -36,24 +36,24 @@
             <x-table.th :$header name="status" />
         @endscope
 
-        @scope('cell_status', $header)
+        @scope('header_amount', $header)
+            <x-table.th :$header name="amount" />
+        @endscope
+
+        @scope('cell_status', $item)
             <x-badge :value="$item->status" @class([
                 'badge-outline',
-                'badge-small',
                 'badge-success' => $item->status === 'won',
                 'badge-info' => $item->status === 'open',
                 'badge-error' => $item->status === 'lost',
             ]) />
         @endscope
 
-        @scope('header_amount', $header)
-            <x-table.th :$header name="amount" />
+        @scope('cell_amount', $item)
+            <div class="whitespace-nowrap text-left">
+                R$ {{ number_format($item->amount / 100, 2, ',', '.') }}
+            </div>
         @endscope
-
-        @scope('cell_amount', $header)
-            <div class="whitespace-nowrap text-right"> R$ {{ number_format($item->amout / 100, 2, ',', '.') }}</div>
-        @endscope
-
 
         @scope('actions', $opportunity)
             <div class="flex items-center space-x-2">

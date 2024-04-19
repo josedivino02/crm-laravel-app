@@ -127,7 +127,7 @@ describe('validations', function () {
     });
 });
 
-test("check if component is in the page", function () {
+test('check if component is in the page', function () {
     Livewire::test(Customers\Index::class)
-        ->assertContainsLivewireComponent('customer.update');
+        ->assertContainsLivewireComponent('customers.update');
 });

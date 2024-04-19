@@ -15,9 +15,9 @@ beforeEach(function () {
 it("should be able to update a opportunity", function () {
     $customer = Customer::factory()->create();
 
-    Livewire::test(Opportunities\Create::class)
+    Livewire::test(Opportunities\Update::class)
         ->call('load', $this->opportunity->id)
-        ->set('form.customer_id', $this->opportunity->customer_id)
+        ->set('form.customer_id', $customer->id)
         ->set('form.title', 'Divino')
         ->assertPropertyWired('form.title')
         ->set('form.status', 'won')
@@ -33,7 +33,7 @@ it("should be able to update a opportunity", function () {
         'customer_id' => $customer->id,
         'title' => 'Divino',
         'status' => 'won',
-        'amount' => '123.45',
+        'amount' => '12345',
     ]);
 });
 
@@ -58,7 +58,7 @@ describe('validations', function () {
             ->assertHasErrors(['title' => $rule]);
     })->with([
         'required' => ['required', ''],
-        'in' => ['in', 'Jo'],
+        'in' => ['in', 'Josedivino'],
     ]);
 
     test('amount', function ($rule, $value) {
@@ -72,7 +72,7 @@ describe('validations', function () {
     ]);
 });
 
-test("check if component is in the page", function () {
+test('check if component is in the page', function () {
     Livewire::test(Opportunities\Index::class)
-        ->assertContainsLivewireComponent('opportunity.update');
+        ->assertContainsLivewireComponent('opportunities.update');
 });

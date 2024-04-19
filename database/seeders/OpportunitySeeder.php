@@ -7,19 +7,12 @@ use Illuminate\Database\Seeder;
 
 class OpportunitySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $opps = [];
 
-        for ($i = 0; $i <= 300; $i++) {
-            $opps[] = Opportunity::factory(300)
-                ->make([
-                    'customer_id' => rand(1, 70),
-                    // 'customer_id' => Customer::query()->inRandomOrder()->first(['id'])->id,
-                ])->toArray();
+        for ($i = 1; $i <= 5; $i++) {
+            $opps[] = Opportunity::factory()->make(['customer_id' => rand(1, 70)])->toArray();
         }
 
         Opportunity::query()->insert($opps);

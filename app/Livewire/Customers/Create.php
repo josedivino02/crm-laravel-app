@@ -3,7 +3,8 @@
 namespace App\Livewire\Customers;
 
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\On;
+
+use Livewire\Attributes\{On};
 use Livewire\Component;
 
 class Create extends Component
@@ -24,12 +25,11 @@ class Create extends Component
         $this->modal = true;
     }
 
-    public function save()
+    public function save(): void
     {
-
         $this->form->create();
 
         $this->modal = false;
-        $this->dispatch("customer::reload")->to("customers.index");
+        $this->dispatch('customer::reload')->to('customers.index');
     }
 }

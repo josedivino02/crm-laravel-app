@@ -13,7 +13,7 @@ it("should be able to archive a opportunity", function () {
         ->set('opportunity', $opportunity)
         ->call('archive');
 
-    assertSoftDeleted('opportunitys', [
+    assertSoftDeleted('opportunities', [
         'id' => $opportunity->id,
     ]);
 });
@@ -28,14 +28,13 @@ test("when confirming we should load the opportunity and set modal to true", fun
 
 });
 
-test("after archiving we should disparch an event to tell the list to reload", function () {
+test('after archiving we should dispatch an event to tell the list to reload', function () {
     $opportunity = Opportunity::factory()->create();
 
     Livewire::test(Opportunities\Archive::class)
         ->set('opportunity', $opportunity)
         ->call('archive')
-        ->assertDispatched('Opportunity::reload');
-
+        ->assertDispatched('opportunity::reload');
 });
 
 test("after archiving we should close the modal", function () {

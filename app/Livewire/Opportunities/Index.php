@@ -7,10 +7,9 @@ use App\Support\Table\Header;
 use App\Traits\Livewire\HasTable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Component;
-use Livewire\WithPagination;
+
+use Livewire\{Component, WithPagination};
 
 class Index extends Component
 {
@@ -30,18 +29,14 @@ class Index extends Component
         return Opportunity::query()
             ->select(['opportunities.*', 'customers.name as customer_name'])
             ->join('customers', 'customers.id', '=', 'opportunities.customer_id')
-            ->when(
-                $this->search_trash,
-                fn(Builder $q) => $q->onlyTrashed()
-            );
+            ->when($this->search_trash, fn (Builder $q) => $q->onlyTrashed());
     }
 
     public function searchColumns(): array
     {
-        return ['title', 'customer.name', 'status', 'amount'];
+        return ['title', 'customers.name', 'status', 'amount'];
     }
 
-    #[Computed]
     public function tableHeaders(): array
     {
         return [
